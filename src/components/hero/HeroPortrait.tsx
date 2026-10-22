@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 
 export const HeroPortrait: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const shouldReduceMotion = useReducedMotion()
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -34,6 +35,8 @@ export const HeroPortrait: React.FC = () => {
     setMousePos({ x: 0, y: 0 })
   }
 
+  const yOffset = shouldReduceMotion ? 0 : -scrollProgress * 20
+
   return (
     <div
       ref={containerRef}
@@ -42,24 +45,24 @@ export const HeroPortrait: React.FC = () => {
       onMouseLeave={handleMouseLeave}
       className="relative w-full max-w-xl mx-auto flex flex-col items-center justify-center select-none"
     >
-      {/* Colorful High-Fidelity Portrait with Scroll Parallax & Mouse Response */}
+      {/* Colorful High-Fidelity Portrait with Upward Parallax & Mouse Response */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         style={{
           transform: isHovered
-            ? `perspective(1000px) translateY(${scrollProgress * 45}px) rotateY(${mousePos.x * 0.018}deg) rotateX(${-mousePos.y * 0.018}deg)`
-            : `perspective(1000px) translateY(${scrollProgress * 45}px) rotateY(0deg) rotateX(0deg)`,
-          opacity: Math.max(0.05, 1 - scrollProgress * 1.25),
+            ? `perspective(1000px) translateY(${yOffset}px) rotateY(${mousePos.x * 0.016}deg) rotateX(${-mousePos.y * 0.016}deg)`
+            : `perspective(1000px) translateY(${yOffset}px) rotateY(0deg) rotateX(0deg)`,
+          opacity: Math.max(0.05, 1 - scrollProgress * 1.3),
           transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease-out"
         }}
-        className="relative w-full h-[380px] sm:h-[450px] md:h-[500px] lg:h-[550px] flex items-center justify-center"
+        className="relative w-full h-[300px] sm:h-[380px] md:h-[430px] lg:h-[480px] flex items-center justify-center"
       >
         {/* Subtle Warm Amber Ambient Glow behind head matching the rim light */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-8 left-1/2 -translate-x-1/2 w-[360px] h-[360px] bg-amber-500/15 rounded-full blur-[110px] -z-10"
+          className="pointer-events-none absolute top-8 left-1/2 -translate-x-1/2 w-[340px] h-[340px] bg-amber-500/15 rounded-full blur-[100px] -z-10"
         />
 
         {/* High-Resolution Full-Color Portrait with Original Tones */}
@@ -84,7 +87,7 @@ export const HeroPortrait: React.FC = () => {
         {/* Smooth Bottom Dissolve Gradient melting into pitch-black background */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-44 sm:h-52 bg-gradient-to-t from-black via-black/85 to-transparent z-10"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 sm:h-48 bg-gradient-to-t from-black via-black/85 to-transparent z-10"
         />
         <div
           aria-hidden="true"

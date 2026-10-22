@@ -5,8 +5,8 @@ const NAV_ITEMS = [
   { label: "Work", href: "#projects" },
   { label: "About", href: "#about" },
   { label: "Experience", href: "#experience" },
-  { label: "Skills", href: "#skills" },
-  { label: "Open Source", href: "#opensource" },
+  { label: "Education", href: "#education" },
+  { label: "Achievements", href: "#achievements" },
 ]
 
 export const Navbar: React.FC = () => {
@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30)
 
-      const sections = ["projects", "about", "experience", "skills", "opensource", "contact"]
+      const sections = ["about", "projects", "experience", "education", "achievements", "contact"]
       const scrollPosition = window.scrollY + 250
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
             : "bg-[#14151a]/90 shadow-xl shadow-black/50 border border-white/10 backdrop-blur-md"
         }`}
       >
-        {/* Brand Name in elegant serif display matching reference */}
+        {/* Brand Name in elegant serif display */}
         <a
           href="#hero"
           className="font-serif-display text-xl sm:text-2xl font-normal text-white tracking-wide hover:opacity-80 transition-opacity"
@@ -61,9 +61,9 @@ export const Navbar: React.FC = () => {
           Shreyansh Mojidra
         </a>
 
-        {/* Center / Right Links matching demo layout */}
-        <div className="flex items-center gap-6 sm:gap-8">
-          <nav className="hidden md:flex items-center gap-7 text-xs font-sans font-normal tracking-normal text-zinc-300">
+        {/* Center / Right Links */}
+        <div className="flex items-center gap-5 sm:gap-8">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-7 text-xs font-sans font-normal tracking-normal text-zinc-300">
             {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.href.substring(1)
               return (
@@ -80,7 +80,7 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* "Let's talk ↗" Pill Button exactly matching demo */}
+          {/* "Let's talk ↗" Pill Button */}
           <a
             href="#contact"
             className="flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-xl text-xs font-sans font-medium text-white bg-[#1e2027]/90 border border-white/15 hover:border-white/40 hover:bg-[#252833] transition-all duration-200 shadow-sm"

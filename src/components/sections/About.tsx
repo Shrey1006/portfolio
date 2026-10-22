@@ -1,11 +1,28 @@
-import React from "react"
-import { Award, GraduationCap, ShieldCheck, Terminal, Compass, CheckCircle2 } from "lucide-react"
+import React, { useRef } from "react"
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion"
+import { GraduationCap, ShieldCheck, Terminal, Compass, CheckCircle2 } from "lucide-react"
 import { profileData } from "../../data/profile"
 import { SectionHeading } from "../layout/SectionHeading"
 
 export const About: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null)
+  const shouldReduceMotion = useReducedMotion()
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  })
+
+  // Subtle differential parallax for portrait vs content
+  const yPortrait = useTransform(scrollYProgress, [0, 1], [shouldReduceMotion ? 0 : -25, shouldReduceMotion ? 0 : 25])
+  const yContent = useTransform(scrollYProgress, [0, 1], [shouldReduceMotion ? 0 : 20, shouldReduceMotion ? 0 : -20])
+
   return (
-    <section id="about" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/5">
+    <section
+      ref={sectionRef}
+      id="about"
+      className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/5 overflow-hidden"
+    >
       <div className="max-w-6xl mx-auto">
         <SectionHeading
           number="// 01"
@@ -15,11 +32,20 @@ export const About: React.FC = () => {
           description="Transforming conceptual logic into verified software through rigorous problem-solving, clean architecture, and continuous learning."
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Left Column: Portrait & Credential Highlights */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            {/* Editorial Portrait Container */}
-            <div className="relative group rounded-3xl overflow-hidden glass-panel border border-white/10 p-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start mt-12">
+          {/* Left Column: Portrait & Focused Credential Highlights with Scroll Parallax */}
+          <motion.div
+            style={{ y: yPortrait }}
+            className="lg:col-span-5 flex flex-col gap-5"
+          >
+            {/* Editorial Portrait Container with reveal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="relative group rounded-3xl overflow-hidden glass-panel border border-white/10 p-2"
+            >
               <div className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-[#121622]">
                 <img
                   src="/images/shreyansh-mojidra.jpg"
@@ -46,103 +72,144 @@ export const About: React.FC = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Quick Metrics Grid */}
+            {/* Focused Highlights - Sequenced on Scroll */}
             <div className="grid grid-cols-2 gap-3 font-mono text-xs">
-              <div className="glass-panel rounded-2xl p-4 border border-white/5 flex flex-col gap-1">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="glass-panel rounded-2xl p-4 border border-white/5 flex flex-col gap-1"
+              >
                 <div className="flex items-center gap-1.5 text-zinc-400">
                   <GraduationCap className="w-4 h-4 text-[#a3e635]" />
-                  <span>Degree & VJTI</span>
+                  <span>Institution</span>
                 </div>
-                <span className="text-white font-semibold font-display text-sm">B.Tech Comp Eng</span>
-                <span className="text-[11px] text-zinc-500">CGPA: 7.81 / 10</span>
-              </div>
+                <span className="text-white font-semibold font-display text-sm">VJTI Mumbai</span>
+                <span className="text-[11px] text-zinc-500">B.Tech Comp Eng · 7.81 CGPA</span>
+              </motion.div>
 
-              <div className="glass-panel rounded-2xl p-4 border border-white/5 flex flex-col gap-1">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="glass-panel rounded-2xl p-4 border border-white/5 flex flex-col gap-1"
+              >
                 <div className="flex items-center gap-1.5 text-zinc-400">
                   <ShieldCheck className="w-4 h-4 text-[#38bdf8]" />
                   <span>Academic Minor</span>
                 </div>
                 <span className="text-white font-semibold font-display text-sm">Cybersecurity</span>
-                <span className="text-[11px] text-zinc-500">Network & System Security</span>
-              </div>
+                <span className="text-[11px] text-zinc-500">Systems & Networks</span>
+              </motion.div>
 
-              <div className="glass-panel rounded-2xl p-4 border border-white/5 flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-zinc-400">
-                  <Award className="w-4 h-4 text-[#f59e0b]" />
-                  <span>State Rank</span>
-                </div>
-                <span className="text-white font-semibold font-display text-sm">Rank 301</span>
-                <span className="text-[11px] text-zinc-500">MHT-CET: 99.87%ile</span>
-              </div>
-
-              <a
+              <motion.a
                 href="#coding-stats"
-                className="glass-panel rounded-2xl p-4 border border-white/5 hover:border-[#a3e635]/40 transition-all flex flex-col gap-1 group"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ scale: 1.01 }}
+                className="col-span-2 glass-panel rounded-2xl p-3.5 border border-white/5 hover:border-[#a3e635]/40 transition-all flex items-center justify-between group"
               >
-                <div className="flex items-center justify-between text-zinc-400">
-                  <div className="flex items-center gap-1.5">
-                    <Terminal className="w-4 h-4 text-[#ec4899]" />
-                    <span>DSA Solving</span>
-                  </div>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635] shadow-[0_0_4px_#a3e635] animate-pulse" />
+                <div className="flex items-center gap-2.5">
+                  <Terminal className="w-4 h-4 text-[#ec4899]" />
+                  <span className="text-white font-semibold font-display text-sm group-hover:text-[#a3e635] transition-colors">
+                    550+ Problems Solved
+                  </span>
                 </div>
-                <span className="text-white font-semibold font-display text-sm group-hover:text-[#a3e635] transition-colors">550+ Solved</span>
-                <span className="text-[11px] text-zinc-500">Live via Codolio ↗</span>
-              </a>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635] shadow-[0_0_4px_#a3e635] animate-pulse" />
+                  <span className="text-[11px] text-zinc-400 font-mono">Codolio Live Telemetry ↗</span>
+                </div>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column: Editorial Narrative & How I Build */}
-          <div className="lg:col-span-7 flex flex-col gap-8">
-            <div className="prose prose-invert max-w-none text-zinc-300 space-y-5 text-base sm:text-lg leading-relaxed font-normal">
-              <p className="text-xl sm:text-2xl text-white font-display font-medium leading-snug">
-                "I enjoy turning ideas into working products while continuously improving my engineering foundations."
-              </p>
-              <p>
-                I'm <span className="text-white font-medium">Shreyansh Mojidra</span>, a Computer Engineering student at Veermata Jijabai Technological Institute (VJTI), Mumbai. I enjoy building practical software, exploring full-stack web architectures, and experimenting with AI/ML to understand how algorithmic systems can solve real-world problems.
-              </p>
-              <p>
-                From architecting multi-interface real-time dining platforms and atomic barter economies to engineering satellite super-resolution pipelines and NLP transformer classifiers, I prioritize genuine code quality, low-latency execution, and resilient design patterns over superficial shortcuts.
-              </p>
-              <p>
-                Beyond individual engineering, I am passionate about sharing technical knowledge. As an organizer in the <strong className="text-white">VJTI CP Club</strong> and instructor at the <strong className="text-white">Community of Coders (COC)</strong>, I have conducted workshops on Data Structures & Algorithms and sprint-based mentoring through the Agastya Foundation / JP Morgan CSR initiative.
-              </p>
+          {/* Right Column: Progressive Text Reveal as User Scrolls */}
+          <motion.div
+            style={{ y: yContent }}
+            className="lg:col-span-7 flex flex-col gap-8"
+          >
+            <div className="space-y-5 text-zinc-300 text-base sm:text-lg leading-relaxed font-normal">
+              {/* Highlight Quote */}
+              <motion.p
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="text-xl sm:text-2xl text-white font-display font-medium leading-snug pl-4 border-l-2 border-[#a3e635]"
+              >
+                "I enjoy turning ideas into resilient working software while continuously sharpening my engineering fundamentals."
+              </motion.p>
+
+              {/* Progressive Paragraph 1 */}
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+              >
+                I'm <span className="text-white font-medium">Shreyansh Mojidra</span>, a Computer Engineering student at Veermata Jijabai Technological Institute (VJTI), Mumbai. I build practical software, full-stack web platforms, and intelligent machine learning systems designed to solve real-world problems with high reliability.
+              </motion.p>
+
+              {/* Progressive Paragraph 2 */}
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
+              >
+                I prioritize clean architecture, low-latency execution, and resilient design patterns over superficial shortcuts. Beyond engineering individual systems, I enjoy sharing knowledge as an organizer in the <strong className="text-white font-medium">VJTI CP Club</strong>, conducting technical workshops, and mentoring student cohorts through agile sprints.
+              </motion.p>
             </div>
 
-            {/* "How I Build" Section */}
-            <div className="mt-4 pt-8 border-t border-white/10">
-              <div className="flex items-center gap-2 mb-6">
+            {/* "How I Build" Section - Progressive Staggered Card Reveal */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6 }}
+              className="pt-6 border-t border-white/10"
+            >
+              <div className="flex items-center gap-2 mb-5">
                 <Compass className="w-4 h-4 text-[#a3e635]" />
-                <h3 className="font-display text-lg font-bold uppercase tracking-wider text-white">
-                  How I Build — Engineering Principles
+                <h3 className="font-display text-sm font-bold uppercase tracking-wider text-white">
+                  Engineering Principles
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {profileData.howIBuild.map((item) => (
-                  <div
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {profileData.howIBuild.map((item, idx) => (
+                  <motion.div
                     key={item.step}
-                    className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-[#a3e635]/30 transition-all duration-300 group"
+                    initial={{ opacity: 0, y: 16, scale: 0.97 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    whileHover={{ y: -2 }}
+                    className="glass-panel rounded-2xl p-4 border border-white/5 hover:border-[#a3e635]/30 transition-all duration-300 group"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-1.5">
                       <span className="font-mono text-xs font-bold text-[#a3e635] bg-[#a3e635]/10 px-2 py-0.5 rounded">
                         {item.step}
                       </span>
                       <span className="w-1.5 h-1.5 rounded-full bg-zinc-600 group-hover:bg-[#a3e635] transition-colors" />
                     </div>
-                    <h4 className="font-display font-semibold text-white text-base mb-1.5">
+                    <h4 className="font-display font-semibold text-white text-sm mb-1">
                       {item.title}
                     </h4>
-                    <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-normal">
+                    <p className="text-xs text-zinc-400 leading-relaxed font-normal">
                       {item.description}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
